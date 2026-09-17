@@ -76,6 +76,9 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
         "currentlyViewedBuffers":{},
         'iToken': '',
         'iAlb': '',
+        // Which servers (networks) are collapsed in the hierarchical buffer list,
+        // keyed by "<plugin>.<server>" (see $rootScope.getServerCollapseKey below).
+        'collapsedServers': {},
     });
     $scope.settings = settings;
 
@@ -429,6 +432,59 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
     // convenience wrapper for jump keys
     $rootScope.refresh_filter_predicate = function() {
         set_filter_predicate(settings.orderbyserver);
+    };
+
+    /*
+     * Collapsing/expanding of server (network) groups in the hierarchical
+     * ("order by server") buffer list. This lets users with many networks
+     * hide the channels/queries they don't currently care about instead of
+     * having to scroll through all of them.
+     */
+
+    // Key used to associate a server-type buffer with its child buffers,
+    // consistent with models.getServerForBuffer()
+    $rootScope.getServerCollapseKey = function(buffer) {
+        return buffer.plugin + '.' + buffer.server;
+    };
+
+    $rootScope.isServerCollapsed = function(buffer) {
+        var key = $rootScope.getServerCollapseKey(buffer);
+        return !!(settings.collapsedServers && settings.collapsedServers[key]);
+    };
+
+    $rootScope.toggleServerCollapse = function(buffer, $event) {
+        // Don't let this bubble up to the parent link (which would switch
+        // to the buffer) or navigate via the href="#" on that link.
+        if ($event) {
+            $event.stopPropagation();
+            $event.preventDefault();
+        }
+        var key = $rootScope.getServerCollapseKey(buffer);
+        // Copy so the settings setter (which only fires on assignment) sees a change
+        var collapsed = angular.extend({}, settings.collapsedServers);
+        if (collapsed[key]) {
+            delete collapsed[key];
+        } else {
+            collapsed[key] = true;
+        }
+        settings.collapsedServers = collapsed;
+    };
+
+    // Filter used in the buffer list ng-repeat to hide buffers that belong
+    // to a collapsed server. Only takes effect in the hierarchical view.
+    $rootScope.serverCollapseFilter = function(buffer) {
+        // Server buffers themselves are always shown; only their children
+        // (channels/queries/etc) can be hidden, and only in hierarchical view
+        if (!settings.orderbyserver || buffer.type === 'server') {
+            return true;
+        }
+        // Don't hide anything while the user is actively searching or
+        // using jump keys -- they're looking for a specific buffer
+        if (($scope.search && $scope.search !== "") || $rootScope.showJumpKeys) {
+            return true;
+        }
+        var key = buffer.plugin + '.' + buffer.server;
+        return !(settings.collapsedServers && settings.collapsedServers[key]);
     };
 
     settings.addCallback('useFavico', function(useFavico) {

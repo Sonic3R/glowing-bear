@@ -336,7 +336,7 @@ chown -R <strong>username</strong>:<strong>username</strong> ~<strong>username</
             </form>
           </li>
           <li class="buffer" ng-class="{'active': buffer.active,
-                                        'unread': buffer.unread,
+                                        'unread': (buffer.type === 'server' && isServerCollapsed(buffer)) ? (models.getServerForBuffer(buffer).unread > 0) : buffer.unread,
                                         'notification': buffer.notification,
                                         'highlight': search && search_highlight_key === key,
                                         'indent': buffer.indent,
@@ -344,10 +344,14 @@ chown -R <strong>username</strong>:<strong>username</strong> ~<strong>username</
                                         'channel_hash': buffer.prefix === '#',
                                         'channel_plus': buffer.prefix === '+',
                                         'channel_ampersand': buffer.prefix === '&',
-                                        'private': buffer.type === 'private'}"
-              ng-repeat="(key, buffer) in (filteredBuffers = (getBuffers() | toArray:'withidx' | filter:bufferlistfilter | filter:hasUnread | orderBy:predicate | getBufferQuickKeys:this))">
+                                        'private': buffer.type === 'private',
+                                        'server-collapsed': buffer.type === 'server' && isServerCollapsed(buffer)}"
+              ng-repeat="(key, buffer) in (filteredBuffers = (getBuffers() | toArray:'withidx' | filter:bufferlistfilter | filter:hasUnread | filter:serverCollapseFilter | orderBy:predicate | getBufferQuickKeys:this))">
             <a ng-click="setActiveBuffer(buffer.id)" title="{{ buffer.fullName }}" href="#">
-              <span class="badge pull-right" ng-class="{'danger': buffer.notification}" ng-bind="buffer.notification || buffer.unread"></span>
+              <span class="server-collapse-toggle" ng-if="settings.orderbyserver && buffer.type === 'server'" ng-click="toggleServerCollapse(buffer, $event)" title="{{ isServerCollapsed(buffer) ? 'Expand network' : 'Collapse network' }}">
+                <i class="glyphicon" ng-class="isServerCollapsed(buffer) ? 'glyphicon-triangle-right' : 'glyphicon-triangle-bottom'"></i>
+              </span>
+              <span class="badge pull-right" ng-class="{'danger': buffer.notification}" ng-bind="(buffer.type === 'server' && isServerCollapsed(buffer) && models.getServerForBuffer(buffer).unread > 0) ? models.getServerForBuffer(buffer).unread : (buffer.notification || buffer.unread)"></span>
               <span class="buffer-quick-key">{{ buffer.$quickKey }}</span>
               <span class="buffer-jump-key">{{ ("0" + buffer.$jumpKey).slice(-2) }}</span>
               <span class="buffername" ng-class="::buffer.nameClasses">{{ buffer.trimmedName || buffer.fullName }}</span>

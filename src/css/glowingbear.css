@@ -260,6 +260,20 @@ input[type=text], input[type=password], #sendMessage {
     padding-left: 10px;
 }
 
+/* Collapse/expand toggle for server (network) rows in the hierarchical buffer list */
+#sidebar .server-collapse-toggle {
+    display: inline-block;
+    width: 14px;
+    text-align: center;
+    margin-right: 2px;
+    cursor: pointer;
+}
+
+#sidebar .server-collapse-toggle .glyphicon {
+    font-size: 9px;
+    top: 0;
+}
+
 #sidebar.ng-hide {
   width: 0;
 }
