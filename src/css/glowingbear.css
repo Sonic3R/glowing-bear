@@ -64,13 +64,18 @@ td.message {
 }
 
 #sendMessage {
-    width: 100%;
+    width: 70%;
     height: 35px;
     resize: none;
 }
 
 #sendMessage:focus, #sendMessage:active {
     border-bottom: 2px solid #555;
+}
+
+.footer-clock {
+  width: 30%;
+  height: 35px;
 }
 
 .input-group-btn {

@@ -1039,6 +1039,15 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
             }
         };
 
+        $scope.clock = '';
+        (function tick() {
+            var d = new Date();
+            var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+            $scope.clock = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+            // align to the next whole second to avoid drift
+            $timeout(tick, 1000 - d.getMilliseconds());
+        })();
+
         $rootScope.supports_formatting_date = (function () {
             // function toLocaleDateStringSupportsLocales taken from MDN:
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString#Checking_for_support_for_locales_and_options_arguments
