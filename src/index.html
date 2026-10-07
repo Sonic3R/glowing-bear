@@ -402,6 +402,7 @@ chown -R <strong>username</strong>:<strong>username</strong> ~<strong>username</
         </table><span id="end-of-buffer"></span>
       </div>
       <div class="footer" ng-class="{'withnicklist': showNicklist}">
+        <div class="footer-clock favorite-font" ng-bind="clock"></div>
         <div input-bar input-id="sendMessage" command="command"></div>
       </div>
     </div>
@@ -588,7 +589,6 @@ chown -R <strong>username</strong>:<strong>username</strong> ~<strong>username</
             </ul>
           </div>
           <div class="modal-footer">
-            <div class="footer-clock favorite-font" ng-bind="clock"></div>
             <button type="button" class="btn btn-primary" ng-click="closeModal($event)">Close</button>
           </div>
         </div><!-- /.modal-content -->
