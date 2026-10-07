@@ -64,9 +64,10 @@ td.message {
 }
 
 #sendMessage {
-    width: 70%;
-    height: 35px;
-    resize: none;
+  height: 35px;
+  resize: none;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 #sendMessage:focus, #sendMessage:active {
@@ -74,8 +75,10 @@ td.message {
 }
 
 .footer-clock {
-  width: 30%;
-  height: 35px;
+  flex: 0 0 auto;
+  padding: 0 8px;
+  white-space: nowrap;
+  opacity: 0.7;
 }
 
 .input-group-btn {
@@ -411,14 +414,16 @@ td.time {
 }
 
 .footer {
-    position: fixed;
-    bottom: 0;
-    height: 35px;
-    width: 100%;
-    margin-bottom: env(safe-area-inset-bottom); /* margin for home-indicator on iPhone X */
-    -webkit-transition:0.2s ease-in-out all;
-    transition:0.2s ease-in-out all;
-    z-index: 1;
+  position: fixed;
+  bottom: 0;
+  height: 35px;
+  width: 100%;
+  margin-bottom: env(safe-area-inset-bottom); /* margin for home-indicator on iPhone X */
+  -webkit-transition: 0.2s ease-in-out all;
+  transition: 0.2s ease-in-out all;
+  z-index: 1;
+  display: flex;
+  align-items: center;
 }
 .content[sidebar-state=visible] .footer {
     margin-left: 0;
