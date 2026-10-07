@@ -988,3 +988,9 @@ code {
 #bufferlines.hideTime td.prefix {
     display:none;
 }
+
+@media (max-width: 968px) {
+  .footer-clock {
+    display: none;
+  }
+}
