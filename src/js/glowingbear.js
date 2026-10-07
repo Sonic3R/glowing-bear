@@ -265,26 +265,17 @@ weechat.controller('WeechatCtrl', ['$rootScope', '$scope', '$store', '$timeout',
         $scope.unread = notifications.unreadCount('unread');
         $scope.markAllRead = function () {
             var buffers = models.getBuffers();
-            for (var id in buffers) {
-                if (buffers.hasOwnProperty(id)) {
-                    buffers[id].unread = 0;
-                    buffers[id].notification = 0;
-                }
-            }
-            // Server-level counters (used by collapsed networks) must be reset too
+            Object.keys(buffers).forEach(function(key) {
+                buffers[key].unread = 0;
+                buffers[key].notification = 0;
+            });
+
             var servers = models.getServers();
-            for (var key in servers) {
-                if (servers.hasOwnProperty(key)) {
-                    servers[key].unread = 0;
-                }
-            }
+            Object.keys(servers).forEach(function(key) {
+                servers[key].unread = 0;
+            });
 
-            // Also clear WeeChat's hotlist, so it doesn't come back after a reconnect
-            if (settings.hotlistsync) {
-                connection.sendHotlistClear();
-            }
-
-            // Updates title, favicon and the top-left badges
+            connection.sendHotlistClearAll();
             $rootScope.$emit('notificationChanged');
         };
 
